@@ -17,9 +17,9 @@ learning_rate: 0.001
 pretrained: True
 finetune: False
 
-batch_size: 8
+batch_size: 128
 
-dataloader_workers: 7
+dataloader_workers: 1
 load_tiles: True
 tiles_path: "/gws/nopw/j04/iecdt/deep_learning_lab/1km_naturalcolor_numpy"
 train_metadata: "/gws/nopw/j04/iecdt/deep_learning_lab/1km_naturalcolor_metadata_time_train.csv"
