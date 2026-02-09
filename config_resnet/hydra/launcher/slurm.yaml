@@ -6,8 +6,9 @@ submitit_folder: ${hydra.sweep.dir}/.submitit/%j
 timeout_min: 60
 mem_gb: 16
 cpus_per_task: 8
-partition: orchid
-gres: gpu:1
+# partition: orchid
+partition: par-single
+# gres: gpu:1
 name: ${name}
-additional_parameters:
-  account: orchid
+# additional_parameters:
+  # account: orchid

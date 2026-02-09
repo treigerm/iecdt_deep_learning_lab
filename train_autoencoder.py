@@ -1,4 +1,5 @@
 import logging
+import time
 import os
 import random
 
@@ -89,6 +90,7 @@ def main(cfg: DictConfig):
         batch_size=cfg.batch_size,
         data_transforms=data_transforms,
         dataloader_workers=cfg.dataloader_workers,
+        load_tiles=cfg.load_tiles,
     )
 
     model = iecdt_lab.autoencoder.CNNAutoencoder(latent_dim=cfg.latent_dim)
@@ -103,14 +105,17 @@ def main(cfg: DictConfig):
             optimizer.zero_grad()
 
             batch = batch.to(cfg.device)
+            start_time = time.time()
             preds = model(batch)
             loss = criterion(preds, batch)
             loss.backward()
             optimizer.step()
+            end_time = time.time()
+            batch_time = end_time - start_time
 
             if i % cfg.log_freq == 0:
                 logging.info(
-                    f"Epoch {epoch}/{cfg.epochs} Batch {i}/{len(train_data_loader)}: Loss={loss.item():.2f}"
+                    f"Epoch {epoch}/{cfg.epochs} Batch {i}/{len(train_data_loader)}: Loss={loss.item():.2f} Time={batch_time:.3f}s"
                 )
                 wandb.log({"loss/train": loss.item()})
 

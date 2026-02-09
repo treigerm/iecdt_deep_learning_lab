@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
+import tqdm
+from concurrent.futures import ThreadPoolExecutor
 
 
 @dataclass
@@ -19,24 +21,43 @@ class RGBTile:
 
 
 class GOESRGBTiles(Dataset):
-    def __init__(self, tiles_file: str, metadata_file: str, transform=None) -> None:
+    def __init__(self, tiles_file: str, metadata_file: str, transform=None, load_tiles=False) -> None:
         """
         Args:
             tiles_file (str): Path to a directory containing all the tiles.
             metadata_file (str): Path to a CSV file containing metadata with the header
                 "tile_id,time_ix,lat_ix,lon_ix,$metric1,$metric2,...". `lat_ix` and `lon_ix`
                 will be strings in the format "slice(start, stop, None)".
+            load_tiles (bool): If True, load all tiles into memory. Otherwise, load on demand.
         """
         self.tiles_metadata = self._parse_metadata(metadata_file)
         self.tiles_dir = tiles_file
         self.transform = transform
+        self.load_tiles = load_tiles
+        if self.load_tiles:
+            unique_time_ixs = set([t.time_ix for t in self.tiles_metadata])
+            self.tiles = {}
+            
+            def load_tile(time_ix):
+                return time_ix, np.load(f"{self.tiles_dir}/{time_ix}/time_step.npy")
+            
+            with ThreadPoolExecutor(max_workers=8) as executor:
+                for time_ix, tile in tqdm.tqdm(
+                    executor.map(load_tile, unique_time_ixs),
+                    total=len(unique_time_ixs),
+                    desc="Loading tiles into memory"
+                ):
+                    self.tiles[time_ix] = tile
 
     def __len__(self) -> int:
         return len(self.tiles_metadata)
 
     def __getitem__(self, ix: int) -> tuple[np.ndarray, tuple]:
-        tiles_file = f"{self.tiles_dir}/{self.tiles_metadata[ix].time_ix}/time_step.npy"
-        tile = np.load(tiles_file)
+        if self.load_tiles:
+            tile = self.tiles[self.tiles_metadata[ix].time_ix]
+        else:
+            tiles_file = f"{self.tiles_dir}/{self.tiles_metadata[ix].time_ix}/time_step.npy"
+            tile = np.load(tiles_file)
         tile = tile[
             self.tiles_metadata[ix].lat_ix,
             self.tiles_metadata[ix].lon_ix,
@@ -87,11 +108,13 @@ def get_data_loaders(
     batch_size,
     data_transforms,
     dataloader_workers,
+    load_tiles=False,
 ):
     train_ds = GOESRGBTiles(
         tiles_file=tiles_path,
         metadata_file=train_metadata,
         transform=data_transforms,
+        load_tiles=load_tiles,
     )
     train_data_loader = torch.utils.data.DataLoader(
         train_ds,
@@ -103,6 +126,7 @@ def get_data_loaders(
         tiles_file=tiles_path,
         metadata_file=val_metadata,
         transform=data_transforms,
+        load_tiles=load_tiles,
     )
     val_data_loader = torch.utils.data.DataLoader(
         val_ds,

@@ -15,7 +15,7 @@ It is purposefully minimal to encourage your own exploration.
 
 Additionally, each tile also has associated labels which are all computed from the GOES-16 cloud mask:
 - Cloud Fraction: Percentage of tile that is covered by clouds
-- Mean Cloud Lengthscale: Average size of clouds in the tile
+- Mean Cloud Lengthscale: Average size cloud in the tile
 - Cloud iOrg: Cloud organization index. See Appendix A of [Organization of tropical convection in low vertical wind shears: Role of updraft entrainment](https://agupubs.onlinelibrary.wiley.com/doi/10.1002/2016MS000802) for an explanation of the index.
 
 ### Potential Research Questions
@@ -28,7 +28,7 @@ If you struggle to come up with research questions, here are some inspirations:
     - You can have a look at the list of available pre-trained models [here](https://pytorch.org/vision/main/models.html#classification)
   - Effect of data augmentations (e.g. horizontally flipping input images)?
 - Can we discover meaningful cloud regimes through unsupervised learning?
-  - Train autoencoder and look at clusters in latent space
+  - Train autoencoder and look at clusters in latent space. If you have not heard about autoencoders before Section 14.1 of the [deep learning book](https://www.deeplearningbook.org/contents/autoencoders.html) provides a good introduction.
   - Can we predict the cloud labels from the learned embeddings? Does this perform better or worse than using a pre-trained model?
   - Does the reconstruction quality increase if we use alternative autoencoders? Some alternative architectures you could try:
     - Variational Autoencoder (VAE)
@@ -67,8 +67,7 @@ cd path/to/iecdt_deep_learning_lab
 Then run the following commands:
 ```bash
 uv venv --seed
-source .venv/bin/activate
-uv sync
+uv pip install -e .
 ```
 
 ### JASMIN GPU Access
@@ -90,7 +89,7 @@ The code uploads the results to a project named `iedct_deep_learning_lab` so ens
 
 You can use the following command to check whether your environment is setup correctly:
 ```bash
-uv run train_resnet.py wandb.mode="offline" smoke_test=True log_freq=10 device="cuda" dataloader_workers=2
+uv run train_resnet.py wandb.mode="offline" smoke_test=True log_freq=10 device="cuda"
 ```
 The script uses [Hydra](https://hydra.cc/) to manage configuration files.
 For the ResNet training the configuration files can be found in the `config_resnet` directory.

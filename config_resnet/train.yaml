@@ -20,6 +20,7 @@ finetune: False
 batch_size: 8
 
 dataloader_workers: 7
+load_tiles: True
 tiles_path: "/gws/nopw/j04/iecdt/deep_learning_lab/1km_naturalcolor_numpy"
 train_metadata: "/gws/nopw/j04/iecdt/deep_learning_lab/1km_naturalcolor_metadata_time_train.csv"
 val_metadata: "/gws/nopw/j04/iecdt/deep_learning_lab/1km_naturalcolor_metadata_time_val.csv"

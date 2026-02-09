@@ -19,6 +19,7 @@ batch_size: 16
 latent_dim: 128
 
 dataloader_workers: 7
+load_tiles: False # Whether to load tiles into memory
 tiles_path: "/gws/nopw/j04/iecdt/deep_learning_lab/1km_naturalcolor_numpy"
 train_metadata: "/gws/nopw/j04/iecdt/deep_learning_lab/1km_naturalcolor_metadata_time_train.csv"
 val_metadata: "/gws/nopw/j04/iecdt/deep_learning_lab/1km_naturalcolor_metadata_time_val.csv"

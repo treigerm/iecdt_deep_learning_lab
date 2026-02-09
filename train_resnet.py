@@ -2,6 +2,7 @@ import logging
 import os
 import random
 import ssl
+import time
 
 import hydra
 import matplotlib.pyplot as plt
@@ -97,6 +98,7 @@ def main(cfg: DictConfig):
         batch_size=cfg.batch_size,
         data_transforms=data_transforms,
         dataloader_workers=cfg.dataloader_workers,
+        load_tiles=cfg.load_tiles,
     )
 
     model = torchvision.models.resnet18(
@@ -127,14 +129,17 @@ def main(cfg: DictConfig):
             _, cloud_fraction, _, _ = labels
             batch = batch.to(cfg.device)
             cloud_fraction = cloud_fraction.float().to(cfg.device)
+            start_time = time.time()
             preds = model(batch)  # (num_batch, 1)
             loss = criterion(preds.flatten(), cloud_fraction)
             loss.backward()
             optimizer.step()
+            end_time = time.time()
+            batch_time = end_time - start_time
 
             if i % cfg.log_freq == 0:
                 logging.info(
-                    f"Epoch {epoch}/{cfg.epochs} Batch {i}/{len(train_data_loader)}: Loss={loss.item():.2f}"
+                    f"Epoch {epoch}/{cfg.epochs} Batch {i}/{len(train_data_loader)}: Loss={loss.item():.2f} Time={batch_time:.2f}s"
                 )
                 wandb.log({"loss/train": loss.item()})
 

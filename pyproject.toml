@@ -15,7 +15,8 @@ dependencies = [
     "torch>=2.5.1",
     "torchvision>=0.20.1",
     "tqdm>=4.67.1",
-    "wandb>=0.19.5",
+    "wandb==0.24.0",
+    "zarr>=3.0.1",
 ]
 
 [tool.setuptools]
