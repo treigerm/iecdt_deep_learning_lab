@@ -1,5 +1,5 @@
 Host jasmin
-    User reichelt
+    User {TODO: Add JASMIN username}
     HostName login.jasmin.ac.uk
     PreferredAuthentications publickey
     IdentityFile {TODO: add path to your public key here}
