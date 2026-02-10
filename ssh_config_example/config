@@ -1,0 +1,20 @@
+Host jasmin
+    User reichelt
+    HostName login.jasmin.ac.uk
+    PreferredAuthentications publickey
+    IdentityFile {TODO: add path to your public key here}
+    ForwardAgent yes
+
+Host jasmin-gpu
+    ProxyJump jasmin
+    HostName gpuhost001.jc.rl.ac.uk
+    PreferredAuthentications publickey
+    IdentityFile {TODO: add path to your public key here}
+    ForwardAgent yes
+
+Host jasmin-01
+    ProxyJump jasmin
+    HostName sci-ph-01.jasmin.ac.uk
+    PreferredAuthentications publickey
+    IdentityFile {TODO: add path to your public key here}
+    ForwardAgent yes
